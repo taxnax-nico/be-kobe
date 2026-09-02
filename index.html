@@ -128,7 +128,7 @@
 
   /* ミュートボタン */
   #muteBtn {
-    position: fixed; top: 16px; right: 16px; z-index: 9;
+    position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); z-index: 20;
     width: 44px; height: 44px; border-radius: 50%;
     border: 2px solid rgba(255,255,255,.7);
     background: rgba(0,0,0,.35); color: #fff;
@@ -139,27 +139,34 @@
   #muteBtn.muted { opacity: .6; }
 
   /* 目立たないモード切替ドット（右下隅） */
+  /* モード切替：見た目は小さいままタップ領域を拡大＋iPad安全領域に収める */
   #modeToggle {
-    position: fixed; right: 6px; bottom: 6px; z-index: 9;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: rgba(255,255,255,.10);
+    position: fixed;
+    right: max(2px, env(safe-area-inset-right));
+    bottom: max(2px, env(safe-area-inset-bottom));
+    z-index: 20;
+    width: 46px; height: 46px;
+    background: transparent;
     cursor: pointer;
+  }
+  #modeToggle::after {
+    content: "";
+    position: absolute; right: 9px; bottom: 9px;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: rgba(255,255,255,.12);
     transition: background .3s, box-shadow .3s;
   }
-  /* 必ず成功モード時だけ、ほんのり色づく（知っている人だけ気づく程度） */
-  #modeToggle.win-mode {
-    background: rgba(255,210,63,.55);
-    box-shadow: 0 0 6px rgba(255,210,63,.6);
+  #modeToggle.win-mode::after {
+    background: rgba(255,210,63,.6);
+    box-shadow: 0 0 7px rgba(255,210,63,.65);
   }
-  /* 再起動モード：うっすら紫（これも控えめ） */
-  #modeToggle.reboot-mode {
-    background: rgba(180,80,255,.55);
-    box-shadow: 0 0 6px rgba(180,80,255,.6);
+  #modeToggle.reboot-mode::after {
+    background: rgba(180,80,255,.6);
+    box-shadow: 0 0 7px rgba(180,80,255,.65);
   }
-  /* チャレンジモード：うっすら青緑（控えめ） */
-  #modeToggle.challenge-mode {
-    background: rgba(60,220,180,.55);
-    box-shadow: 0 0 6px rgba(60,220,180,.6);
+  #modeToggle.challenge-mode::after {
+    background: rgba(60,220,180,.6);
+    box-shadow: 0 0 7px rgba(60,220,180,.65);
   }
 
   /* ===== 再起動モード演出 ===== */
@@ -614,6 +621,15 @@
   let challengeTimer = null;
   function challengeFail() {
     clearTimeout(challengeTimer);
+    // 回転中のリールを一旦すべて停止（その場でスナップして静止）
+    reels.forEach(r => {
+      if (r.spinning) {
+        r.spinning = false;
+        r.pos = ((Math.round(r.pos) % NSYM) + NSYM) % NSYM;
+        render(r);
+        r.symbol = SYMBOLS[r.pos % NSYM];
+      }
+    });
     clearReach(); Audio.setReach(false);
     Audio.sfxLose();
     msgEl.textContent = "ざんねん… 次のゲームへ";
