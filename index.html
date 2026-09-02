@@ -632,16 +632,11 @@
     });
     clearReach(); Audio.setReach(false);
     Audio.sfxLose();
-    msgEl.textContent = "ざんねん… 次のゲームへ";
+    // ボタンは「SPIN」に戻す（手動でもう一度回す）
+    msgEl.textContent = "ざんねん… " + reels.map(r => r.symbol).join("");
     msgEl.className = "message show lose";
     backBtn.hidden = true;
-    autoLock = true;
-    spinBtn.disabled = true;
-    challengeTimer = setTimeout(() => {
-      autoLock = false;
-      spinBtn.disabled = false;
-      startSpin();
-    }, 1200);
+    spinBtn.textContent = "SPIN";
   }
 
   function showWin(sup) {
