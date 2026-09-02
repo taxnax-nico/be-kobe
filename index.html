@@ -306,9 +306,9 @@
 
   <div class="panel">
     <div class="howto">
-      <span class="step"><b>1</b> SPINで回す</span>
-      <span class="step"><b>2</b> STOPで左から順に1つずつ止める</span>
-      <span class="step"><b>3</b> BEKOBE がそろえば成功！</span>
+      <span class="step"><b>1</b>「SPIN」でスタート</span>
+      <span class="step"><b>2</b>「STOP」で左から順番に1つずつ止める</span>
+      <span class="step"><b>3</b>「B E K O B E」がそろえば成功！</span>
     </div>
     <div class="btn-row">
       <button id="backBtn" hidden>◀ 1つ戻る</button>
@@ -634,6 +634,8 @@
       : ((Math.round(reel.pos) % NSYM) + NSYM) % NSYM;
     render(reel);
     reel.symbol = SYMBOLS[reel.pos % NSYM];
+    // 失敗が確定した瞬間にBGMを止める（BGMはリール回転中のみ）
+    if (reel.symbol !== reel.target) Audio.stopBGM();
     // チャレンジモード：失敗が確定したら即・次のゲームへ
     if (mode === 3 && reel.symbol !== reel.target) { challengeFail(); return; }
     if (reels.every(r => !r.spinning)) checkResult();
@@ -655,6 +657,7 @@
       }
     });
     clearReach(); Audio.setReach(false);
+    Audio.stopBGM();
     Audio.sfxLose();
     // ボタンは「SPIN」に戻す（手動でもう一度回す）
     msgEl.textContent = "ざんねん… " + reels.map(r => r.symbol).join("");
