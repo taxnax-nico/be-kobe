@@ -236,45 +236,45 @@
   }
 
   /* 紙吹雪 */
-  /* 景品オーバーレイ */
+  /* 景品オーバーレイ（画面上部・リールを隠さない） */
   .prize {
-    position: fixed; inset: 0; z-index: 30;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,.62);
-    padding: 20px;
-    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+    display: flex; justify-content: center;
+    padding: max(8px, env(safe-area-inset-top)) 12px 0;
+    pointer-events: none;   /* 背景は素通し。カードだけ操作可 */
   }
   .prize-card {
-    width: min(92vw, 460px);
+    pointer-events: auto;
+    width: min(90vw, 430px);
     background: linear-gradient(#fffdf5, #fff4d6);
     border: 4px solid #ffd23f;
-    border-radius: 22px;
-    padding: 26px 22px 22px;
+    border-radius: 18px;
+    padding: 14px 18px;
     text-align: center;
     color: #3a2a00;
-    box-shadow: 0 18px 50px rgba(0,0,0,.5);
+    box-shadow: 0 14px 40px rgba(0,0,0,.55);
     animation: prizePop .45s cubic-bezier(.2,1.5,.4,1);
   }
   @keyframes prizePop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   .prize-title {
-    font-size: clamp(2rem, 8vw, 3rem); font-weight: 900; letter-spacing: 2px;
+    font-size: clamp(1.6rem, 6.5vw, 2.4rem); font-weight: 900; letter-spacing: 2px;
     color: #e14b00; text-shadow: 0 2px 0 #ffcf5a;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
   }
   .prize-msg {
-    font-size: clamp(1.05rem, 4.2vw, 1.5rem); font-weight: 800; line-height: 1.5;
-    margin-bottom: 10px;
+    font-size: clamp(.95rem, 3.6vw, 1.3rem); font-weight: 800; line-height: 1.35;
+    margin-bottom: 6px;
   }
-  .prize-note { font-size: clamp(.8rem, 3vw, 1rem); font-weight: 700; color: #9a5b00; margin-bottom: 16px; }
+  .prize-note { font-size: clamp(.75rem, 2.8vw, .95rem); font-weight: 700; color: #9a5b00; margin-bottom: 10px; }
   .prize-time {
-    font-size: clamp(1rem, 4.5vw, 1.4rem); font-weight: 900; letter-spacing: 1px;
+    font-size: clamp(.95rem, 4vw, 1.25rem); font-weight: 900; letter-spacing: 1px;
     color: #1c2b5a; background: #eef2ff; border: 2px dashed #8ea0d8;
-    border-radius: 12px; padding: 10px 8px; margin-bottom: 18px;
+    border-radius: 10px; padding: 7px 6px; margin-bottom: 12px;
     font-variant-numeric: tabular-nums;
   }
   .prize-close {
-    padding: 12px 34px; border: none; border-radius: 30px;
-    font-weight: 900; font-size: 1.05rem; letter-spacing: 1px; cursor: pointer;
+    padding: 10px 30px; border: none; border-radius: 30px;
+    font-weight: 900; font-size: 1rem; letter-spacing: 1px; cursor: pointer;
     background: #ff5a5f; color: #fff; box-shadow: 0 5px 0 #c23b40;
   }
   .prize-close:active { transform: translateY(2px); }
@@ -752,7 +752,12 @@
     clearReach(); Audio.setReach(false); Audio.stopBGM();
     const win = reels.every(r => r.symbol === r.target);
     if (win) {
-      if (mode === 3) { showWin(true); showPrize(); }  // チャレンジ成功＝景品GET
+      if (mode === 3) {                      // チャレンジ成功＝景品GET（中央大文字は出さずリールを見せる）
+        Audio.win(true); confettiBurst(130);
+        msgEl.className = "message";
+        spinBtn.textContent = "SPIN";
+        showPrize();
+      }
       else showWin(mode === 2);                        // 再起動モードでの成功は超派手
     } else {
       showLose();
