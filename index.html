@@ -688,6 +688,7 @@
   }
 
   let nextStop = 0;   // 次に止めるリール（左から0,1,2…）
+  let backUsed = 0;   // 「1つ戻る」使用回数（再起動モードは1ゲーム2回まで）
 
   function clearReach() {
     document.body.classList.remove("reach");
@@ -703,6 +704,7 @@
   function updateBackBtn() {
     if (autoLock) { backBtn.hidden = true; return; }
     if (mode === 3) { backBtn.hidden = true; return; }  // チャレンジは戻る不可
+    if (mode === 2 && backUsed >= 2) { backBtn.hidden = true; return; }  // 再起動モードは2回まで
     const failLocked = reels.some(r => !r.spinning && r.symbol !== r.target);
     backBtn.hidden = !failLocked;
   }
@@ -721,6 +723,7 @@
     // 速度を初期値に戻す（6桁目のブーストをリセット）
     reels.forEach((r, idx) => { r.spinning = true; r.symbol = null; r.speed = (mode === 3) ? (idx === 5 ? 6 : 4) : SPEEDS[idx]; });
     nextStop = 0;
+    backUsed = 0;
     spinBtn.textContent = "STOP";
     backBtn.hidden = true;
     if (!animId) { lastTs = null; animId = requestAnimationFrame(loop); }
@@ -889,6 +892,8 @@
   // 直前に止めたリールを1つだけ回し直す
   function goBack() {
     if (autoLock || nextStop <= 0) return;
+    if (mode === 2 && backUsed >= 2) return;   // 再起動モードは1ゲーム2回まで
+    if (mode === 2) backUsed++;
     const i = --nextStop;          // 直前に止めたリール
     const reel = reels[i];
     reel.spinning = true;
