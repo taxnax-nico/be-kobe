@@ -335,6 +335,55 @@
     0%,100% { transform: translateX(-50%) scale(1) rotate(-4deg); }
     50%     { transform: translateX(-50%) scale(1.1) rotate(4deg); }
   }
+
+  /* ===== オープニングデモ ===== */
+  .opening {
+    position: fixed; inset: 0; z-index: 60;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5vh;
+    background: radial-gradient(circle at 50% 40%, #1d2b55, #070b18 80%);
+    overflow: hidden; cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .opening[hidden] { display: none; }
+  .op-stage { position: relative; display: flex; align-items: center; justify-content: center;
+    min-height: 42vh; width: 100%; }
+  /* 旧ロゴ */
+  .logo1 {
+    position: absolute; text-align: center; color: #fff; font-weight: 900;
+    font-size: clamp(1.5rem, 5.6vw, 3.2rem); letter-spacing: 2px; line-height: 1.35;
+    padding: 0 14px; text-shadow: 0 2px 14px rgba(0,0,0,.6);
+  }
+  .logo1 .ch { display: inline-block; will-change: transform, opacity, filter; }
+  .opening.crumbling .logo1 .ch {
+    animation: crumble 1s forwards cubic-bezier(.4,0,.9,.5);
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes crumble {
+    0%   { transform: translate(0,0) rotate(0); opacity: 1; filter: blur(0); }
+    100% { transform: translate(var(--dx,0), var(--dy,200px)) rotate(var(--rot,60deg)); opacity: 0; filter: blur(7px); }
+  }
+  /* 新ロゴ */
+  .logo2 { position: absolute; text-align: center; color: #fff; opacity: 0; transform: scale(.4); }
+  .logo2.show { animation: logo2in .6s cubic-bezier(.2,1.5,.35,1) forwards; }
+  @keyframes logo2in { to { opacity: 1; transform: scale(1); } }
+  .logo2 .l2-top { display:block; font-size: clamp(1rem, 3.4vw, 1.8rem); font-weight: 800; letter-spacing: 3px; margin-bottom: .35em; }
+  .logo2 .l2-main {
+    display:block; font-family: "Arial Black","Segoe UI",sans-serif;
+    font-size: clamp(3rem, 15vw, 7.5rem); font-weight: 900; line-height: 1; color: #fbfdfe;
+    text-shadow: 3px 0 0 #cfd6db, 6px 0 0 #c2cad0, 9px 7px 14px rgba(0,0,0,.55);
+  }
+  .logo2 .l2-sub { display:block; font-size: clamp(1.2rem, 4.6vw, 2.4rem); font-weight: 900;
+    letter-spacing: 5px; margin-top: .25em; color: #ffd23f; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+  /* フラッシュ */
+  .op-flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 61; }
+  .op-flash.fire { animation: opflash .5s ease-out; }
+  @keyframes opflash { 0% { opacity: 0; } 14% { opacity: 1; } 100% { opacity: 0; } }
+  /* タッチ案内 */
+  .op-hint { font-size: clamp(1rem, 4vw, 1.6rem); font-weight: 800; color: #fff; letter-spacing: 2px;
+    opacity: 0; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+  .op-hint.show { animation: hintBlink 1.2s ease-in-out infinite; }
+  @keyframes hintBlink { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
 </style>
 </head>
 <body>
@@ -373,6 +422,20 @@
 
   <!-- 目立たないモード切替（画面右下のごく薄いドット） -->
   <div id="modeToggle" title=""></div>
+
+  <!-- オープニングデモ -->
+  <div class="opening" id="opening">
+    <div class="op-stage">
+      <div class="logo1" id="logo1"></div>
+      <div class="logo2" id="logo2">
+        <span class="l2-top">第50回全国</span>
+        <span class="l2-main">BE KOBE</span>
+        <span class="l2-sub">スロット集会</span>
+      </div>
+    </div>
+    <div class="op-hint" id="opHint">タッチしてスタート</div>
+    <div class="op-flash" id="opFlash"></div>
+  </div>
 
 <script>
   const SYMBOLS = ["K", "E", "B", "O"];
@@ -861,6 +924,75 @@
   initDisplay();
   // 画面サイズが変わっても位置がずれないよう再描画
   window.addEventListener("resize", () => reels.forEach(render));
+
+  // ===== オープニングデモ（崩れ→フラッシュ→新ロゴ） =====
+  const opening = document.getElementById("opening");
+  const logo1El = document.getElementById("logo1");
+  const logo2El = document.getElementById("logo2");
+  const opHint  = document.getElementById("opHint");
+  const opFlash = document.getElementById("opFlash");
+  const LOGO1_TEXT = "第61回KOBE×全国研究集会";
+  let opTimers = [];
+  const clearOpTimers = () => { opTimers.forEach(clearTimeout); opTimers = []; };
+
+  function buildLogo1() {
+    logo1El.innerHTML = "";
+    [...LOGO1_TEXT].forEach((c, i) => {
+      const sp = document.createElement("span");
+      sp.className = "ch";
+      sp.textContent = c;
+      const dx = (Math.random() * 2 - 1) * 150;
+      const dy = 150 + Math.random() * 240;
+      const rot = (Math.random() * 2 - 1) * 150;
+      sp.style.setProperty("--dx", dx.toFixed(0) + "px");
+      sp.style.setProperty("--dy", dy.toFixed(0) + "px");
+      sp.style.setProperty("--rot", rot.toFixed(0) + "deg");
+      sp.style.setProperty("--d", (i * 0.02 + Math.random() * 0.15).toFixed(2) + "s");
+      logo1El.appendChild(sp);
+    });
+  }
+
+  function playOpening() {
+    clearOpTimers();
+    opening.hidden = false;
+    opening.classList.remove("crumbling");
+    logo1El.style.opacity = "1";
+    logo2El.classList.remove("show");
+    opHint.classList.remove("show");
+    opFlash.classList.remove("fire");
+    buildLogo1();
+    // 1.6秒後：崩れ開始
+    opTimers.push(setTimeout(() => opening.classList.add("crumbling"), 1600));
+    // 2.65秒後：フラッシュ＋新ロゴ登場
+    opTimers.push(setTimeout(() => {
+      void opFlash.offsetWidth; opFlash.classList.add("fire");
+      logo1El.style.opacity = "0";
+      logo2El.classList.add("show");
+    }, 2650));
+    // 3.4秒後：タッチ案内
+    opTimers.push(setTimeout(() => opHint.classList.add("show"), 3400));
+  }
+
+  function dismissOpening() {
+    if (opening.hidden) return;
+    clearOpTimers();
+    opening.hidden = true;
+  }
+  opening.addEventListener("pointerdown", dismissOpening);
+
+  // 45秒放置で自動的にオープニングへ戻る（展示アトラクト）
+  let idleTimer;
+  function resetIdle() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (opening.hidden && !reels.some(r => r.spinning) && prizeEl.hidden) playOpening();
+    }, 45000);
+  }
+  ["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, resetIdle, true));
+  resetIdle();
+
+  // 起動時にオープニング再生
+  playOpening();
 
   // ===== 展示（キオスク）向け設定 =====
   document.addEventListener("gesturestart", e => e.preventDefault());   // ピンチズーム抑止
