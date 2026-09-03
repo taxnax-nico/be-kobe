@@ -962,15 +962,15 @@
     opFlash.classList.remove("fire");
     buildLogo1();
     // 1.6秒後：崩れ開始
-    opTimers.push(setTimeout(() => opening.classList.add("crumbling"), 1600));
+    opTimers.push(setTimeout(() => opening.classList.add("crumbling"), 5000));  // 旧ロゴを5秒見せてから崩す
     // 2.65秒後：フラッシュ＋新ロゴ登場
     opTimers.push(setTimeout(() => {
       void opFlash.offsetWidth; opFlash.classList.add("fire");
       logo1El.style.opacity = "0";
       logo2El.classList.add("show");
-    }, 2650));
+    }, 6050));
     // 3.4秒後：タッチ案内
-    opTimers.push(setTimeout(() => opHint.classList.add("show"), 3400));
+    opTimers.push(setTimeout(() => opHint.classList.add("show"), 6800));
   }
 
   function dismissOpening() {
