@@ -356,7 +356,7 @@
   }
   .logo1 .ch { display: inline-block; will-change: transform, opacity, filter; }
   .opening.crumbling .logo1 .ch {
-    animation: crumble 1s forwards cubic-bezier(.4,0,.9,.5);
+    animation: crumble 2.4s forwards cubic-bezier(.35,0,.9,.4);
     animation-delay: var(--d, 0s);
   }
   @keyframes crumble {
@@ -947,7 +947,7 @@
       sp.style.setProperty("--dx", dx.toFixed(0) + "px");
       sp.style.setProperty("--dy", dy.toFixed(0) + "px");
       sp.style.setProperty("--rot", rot.toFixed(0) + "deg");
-      sp.style.setProperty("--d", (i * 0.02 + Math.random() * 0.15).toFixed(2) + "s");
+      sp.style.setProperty("--d", (i * 0.04 + Math.random() * 0.3).toFixed(2) + "s");
       logo1El.appendChild(sp);
     });
   }
@@ -968,9 +968,9 @@
       void opFlash.offsetWidth; opFlash.classList.add("fire");
       logo1El.style.opacity = "0";
       logo2El.classList.add("show");
-    }, 6050));
+    }, 8300));
     // 3.4秒後：タッチ案内
-    opTimers.push(setTimeout(() => opHint.classList.add("show"), 6800));
+    opTimers.push(setTimeout(() => opHint.classList.add("show"), 9050));
   }
 
   function dismissOpening() {
