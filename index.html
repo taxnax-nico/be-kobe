@@ -367,14 +367,15 @@
   .logo2 { position: absolute; text-align: center; color: #fff; opacity: 0; transform: scale(.4); }
   .logo2.show { animation: logo2in .6s cubic-bezier(.2,1.5,.35,1) forwards; }
   @keyframes logo2in { to { opacity: 1; transform: scale(1); } }
-  .logo2 .l2-top { display:block; font-size: clamp(1rem, 3.4vw, 1.8rem); font-weight: 800; letter-spacing: 3px; margin-bottom: .35em; }
+  .logo2 .l2-top { display:block; font-size: clamp(.95rem, 3vw, 1.6rem); font-weight: 800; letter-spacing: 3px; margin-bottom: .3em; opacity: .95; }
   .logo2 .l2-main {
     display:block; font-family: "Arial Black","Segoe UI",sans-serif;
-    font-size: clamp(3rem, 15vw, 7.5rem); font-weight: 900; line-height: 1; color: #fbfdfe;
-    text-shadow: 3px 0 0 #cfd6db, 6px 0 0 #c2cad0, 9px 7px 14px rgba(0,0,0,.55);
+    font-size: clamp(3.6rem, 18vw, 9rem); font-weight: 900; line-height: 1; color: #fbfdfe;
+    text-shadow: 3px 0 0 #cfd6db, 6px 0 0 #c2cad0, 9px 7px 14px rgba(0,0,0,.55),
+                 0 0 26px rgba(255,210,63,.55), 0 0 50px rgba(255,180,0,.35);
   }
-  .logo2 .l2-sub { display:block; font-size: clamp(1.2rem, 4.6vw, 2.4rem); font-weight: 900;
-    letter-spacing: 5px; margin-top: .25em; color: #ffd23f; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+  .logo2 .l2-sub { display:block; font-size: clamp(1.05rem, 4vw, 2rem); font-weight: 900;
+    letter-spacing: 4px; margin-top: .3em; color: #ffd23f; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
   /* フラッシュ */
   .op-flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 61; }
   .op-flash.fire { animation: opflash .5s ease-out; }
@@ -428,9 +429,9 @@
     <div class="op-stage">
       <div class="logo1" id="logo1"></div>
       <div class="logo2" id="logo2">
-        <span class="l2-top">第50回全国</span>
+        <span class="l2-top">第61回</span>
         <span class="l2-main">BE KOBE</span>
-        <span class="l2-sub">スロット集会</span>
+        <span class="l2-sub">全国スロット集会</span>
       </div>
     </div>
     <div class="op-hint" id="opHint">タッチしてスタート</div>
